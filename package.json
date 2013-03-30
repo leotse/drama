@@ -1,0 +1,16 @@
+{
+  "name": "application-name",
+  "version": "0.0.1",
+  "private": true,
+  "scripts": {
+    "start": "node app"
+  },
+  "dependencies": {
+    "express": "3.0.3",
+    "jade": "*",
+    "request": "~2.16.6",
+    "apricot": "0.0.6",
+    "jquery": "~1.8.3",
+    "async": "~0.2.6"
+  }
+}
