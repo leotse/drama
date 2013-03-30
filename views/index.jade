@@ -2,11 +2,10 @@ extends layout
 
 block content
 	h1 azdrama
-	p welcome to azdrama viewer
-	p please enter url to an episode
-	form(action="/process", method="post")
-		div
-			label(for="url") URL - 
-			input(type="text", id="url", name="url")
-		div
-			input(type="submit", value="submit")
+	ul.featured
+		each item in featured
+			li
+				figure
+					img(src=item.image, alt=item.title)
+					figcaption 
+						a(href="/series?path=#{item.path}")=item.title

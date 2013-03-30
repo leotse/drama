@@ -1,0 +1,8 @@
+extends layout
+
+block content
+	h1 azdrama series
+	ul.series
+		each episode in episodes
+			li
+				a(href="/episode?path=#{episode.path}", alt=episode.title)= episode.title
