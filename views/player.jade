@@ -1,0 +1,8 @@
+extends layout
+
+block content
+	h1 video 
+	video(controls, autoplay)
+		source(src="#{url}", type="video/mp4")
+	script(src="http://code.jquery.com/jquery-1.9.1.min.js")
+	script(src="/javascripts/player.js")

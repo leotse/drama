@@ -74,7 +74,8 @@ exports.series = function(req, res) {
 exports.episode = function(req, res) {
 	var query = req.query
 	,	path = query.path
-	,	url = BASE_URL + path;
+	,	url = BASE_URL + path
+	,	episodes = null;
 
 	async.waterfall([
 
@@ -83,23 +84,40 @@ exports.episode = function(req, res) {
 
 		// get the player url
 		function(body, done) { 
-			var url = $(body).find('#player iframe').attr('src');
+			var $body = $(body)
+			,	$links = $body.find('.content .lst_episode a')
+			,	url = $(body).find('#player iframe').attr('src');
+
+			// get the episodes metadata
+			episodes = _.map($links, function(link) {
+				var href = link.href
+				,	num = link.childNodes[0].innerHTML
+				,	number = Number(num);
+
+				return {
+					number: number,
+					path: getPath(href)
+				};
+			});
+
+			// force html video
 			url += "&html5=1";
 			done(null, url);
 		},
 
 		// download the player page
-		function(url, done) { downloadString(url, done); },
+		downloadString,
 
 		// get the video url
 		function(body, done) {
-			var url = $(body).find('video source').attr('src');
+			var url = $(body).find('video source').attr('src')
 			done(null, url);
 		}
-	], function(err, result) {
 
-		// finally render the page!
-		res.render('video', { video: result });
+	], function(err, url) {
+		
+		// finally render the player
+		res.render('player', { url: url });
 	});
 };
 

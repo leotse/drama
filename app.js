@@ -5,6 +5,7 @@
 
 var express = require('express')
   , routes = require('./routes')
+  , api = require('./routes/api')
   , http = require('http')
   , path = require('path');
 
@@ -30,6 +31,7 @@ app.configure('development', function(){
 app.get('/', routes.index);
 app.get('/series', routes.series);
 app.get('/episode', routes.episode);
+app.get('/api/episodes', api.episodes);
 
 // start server
 http.createServer(app).listen(app.get('port'), function(){
