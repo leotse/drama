@@ -28,10 +28,14 @@ app.configure('development', function(){
 });
 
 // routes
+// app.get('/', routes.index);
+// app.get('/series', routes.series);
+// app.get('/episode', routes.episode);
+// app.get('/api/episodes', api.episodes);
+
+// new routes
 app.get('/', routes.index);
-app.get('/series', routes.series);
-app.get('/episode', routes.episode);
-app.get('/api/episodes', api.episodes);
+app.get('/search', routes.search);
 
 // start server
 http.createServer(app).listen(app.get('port'), function(){

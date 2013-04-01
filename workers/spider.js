@@ -23,19 +23,30 @@ var BASE_URL = "http://azdrama.net"
 
 
 // test data!
-async.series([
+// wait a little initially for db connection to init
+setTimeout(function() {
+	async.series([
 
-	// first drop the collection
-	// function(done) { Job.collection.drop(done); },
+		// drop the collections
+		function(done) { Job.collection.drop(done); },
+		function(done) { Video.collection.drop(done); },
 
-	// now add the entry job!
-	function(done) {
-		createJob(BASE_URL + HK_DRAMA, '#m .content .normal > a', done);
-	}
+		// rebuild indexes
+		function(done) { Job.ensureIndexes(done); },
+		function(done) { Video.ensureIndexes(done); },
 
-], start);
+		// now add the entry job!
+		function(done) {
+			var url = BASE_URL + HK_DRAMA
+			,	selector = '#m .content .normal > a';
+			createJob(url, selector, done);
+		}
 
-// start workers
+	], start);
+}, 1000);
+
+
+// start workers!
 function start() {
 	_.times(10, getJob);
 }
@@ -53,60 +64,66 @@ function processJob(err, job) {
 	if(err) waitThenGetJob();
 	else if(!job) waitThenGetJob();
 	else {
-		
-		var url = job.url
-		,	selector = job.selector;
-
-		console.log('processing - ' + url);
-
-		if(url.toLowerCase().indexOf('.html') >= 0) {
-
-			// video page! save the video
-			processVideo(job);
-
-		} else {
-
-			// not a video page! add all the links
-			processLinks(job);
-		}
+		console.log('processing - ' + job.url);
+		processPage(job);
 	}
 }
 
-function processVideo(job) {
+function processPage(job) {
 	var url = job.url
 	,	selector = job.selector;
 
-	var series, episode;
+	downloadPage(url, function(err, body) {
+		if(err) {
+			jobCompleted(err, job);
+			return;
+		}
+
+		// get video link
+		var $html = $(body)
+		,	$video = $html.find('#player iframe')
+		,	url = $video.attr('src');
+
+		// see if video is present
+		// if not, process the links on the page
+		if(url) {
+			processVideo($html, job);
+		} else {
+			processLinks($html, job);
+		}
+	});
+}
+
+function processVideo(html, job) {
+	var $html = $(html);
+
+	// get video link
+	var $video = $html.find('#player iframe')
+	,	url = $video.attr('src');
+
+	// force html5 video
+	url += "&html5=1";
+
+	// get episode metadata
+	var title = $html.find('title').text()
+	,	match = (/(.+)\s-\sepisode\s(\d+)/i).exec(title);
+
+	// make sure we get the required metadat before continuing
+	if(!match || match.length !== 3) { 
+		jobCompleted(new Error('unable to get video metadata from title - ' + title), job);
+		return;
+	}
+
 	async.waterfall([
 
-		// download the video host page
+		// download page
 		function(done) { downloadPage(url, done); },
 
-		// get the video page
+		// get the video url and save video
 		function(body, done) {
-			var $html = $(body);
-
-			// get video link
-			var $video = $html.find('#player iframe')
-			,	url = $video.attr('src');
-
-			// get episode metadata
-			var title = $html.find('title').text()
-			,	match = (/(.+)\s-\sepisode\s(\d+)/i).exec(title);
-
-			if(match) {
-				series = match[1]
-				episode = match[2];
-			}
-
-			// force html5 video
-			url += "&html5=1";
-			downloadPage(url, done);
-		},
-
-		// get the video url
-		function(body, done) {
-			var url = $(body).find('video source').attr('src');
+			var url = $(body).find('video source').attr('src')
+			,	series = match[1]
+			,	episode = match[2];
 
 			// save video to db!
 			var vid = new Video;
@@ -116,48 +133,41 @@ function processVideo(job) {
 			vid.save(done);
 		}
 
-	], getJob);
+	], function(err) { jobCompleted(err, job); });
 }
 
-function processLinks(job) {
-	var url = job.url
-	,	selector = job.selector;
+function processLinks(html, job) {
+	var $html = $(html)
+	,	selector = job.selector
+	,	links = $html.find(selector);
 
-	async.waterfall([
+	// create a list of links
+	var hrefs = _.map(links, function(link) { 
+		return link.href; 
+	});
+	var filtered = _.filter(hrefs, function(href) { 
+		return href.toLowerCase().indexOf(BASE_URL) >= 0; 
+	});
 
-		// download page
-		function(done) { downloadPage(url, done); },
+	async.each(filtered, function(url, done) {
+		createJob(url, DEFAULT_SELECTOR, done);
+	}, function(err) { 
+		jobCompleted(err, job);
+	});
+}
 
-		// get the links of interest
-		function(body, done) {
-			var $html = $(body)
-			,	links = $html.find(selector);
+function jobCompleted(err, job) {
+	if(err) {
+		job.state = 'error';
+		job.message = err.message;
+		job.save();
+	} else {
+		job.state = 'complete';
+		job.save();
+	}
 
-			// create a list of links
-			var hrefs = _.map(links, function(link) { 
-				return link.href; 
-			});
-			var filtered = _.filter(hrefs, function(href) { 
-				return href.toLowerCase().indexOf(BASE_URL) >= 0; 
-			});
-
-			done(null, filtered);
-		},
-
-		// create jobs for the links
-		function(urls, completed)  {
-			async.each(urls, function(furl, done) {
-				createJob(furl, DEFAULT_SELECTOR, done);
-			}, completed);
-		},
-
-		// update job state to complete
-		function(done) {
-			job.state = 'complete';
-			job.save(done);
-		}
-
-	], getJob);
+	// continue processing either way
+	process.nextTick(getJob);
 }
 
 function waitThenGetJob(err) {

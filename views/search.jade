@@ -1,0 +1,11 @@
+extends layout
+
+block content
+
+	center
+		div#search
+			h1 what would you like to watch today?
+			form(method="get", action="/search")
+				input(type="text", name="term", class="text")
+				br
+				input(type="submit")

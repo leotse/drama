@@ -11,9 +11,9 @@ var VideoSchema = new Schema({
 
 	series: { type: String, required: true },
 	episode: { type: Number, required: true },
-	url: { type: String, required: true }
+	url: { type: String, required: true, unique: true }
 
-}, { strict: true });
+}, { strict: true, autoIndex: true });
 
 
 // register model with mongoose
