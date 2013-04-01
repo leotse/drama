@@ -4,7 +4,7 @@
 // spider that crawls azdrama.net for all the content i am interested in, haha
 
 // prod mode?
-process.env.PORT = 3000;
+// process.env.PORT = 3000;
 
 // dependencies
 var $ = require('jquery')

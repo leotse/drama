@@ -1,8 +1,12 @@
 extends layout
 
 block content
-	ul.episodes
-		each episode in episodes
-			li
-				span.title #{episode.series} #{episode.episode}
-				a(href="/episode/#{episode._id}", alt="#{episode.series} #{episode.episode}") link
+	div#search
+		form(method="get", action="/search")
+			input(type="text", name="term", class="text", value="#{term}")
+			input(type="submit", value="search")
+		ul.episodes
+			each episode in episodes
+				li
+					span.title #{episode.series} #{episode.episode}
+					a(href="/episode/#{episode._id}", alt="#{episode.series} #{episode.episode}") link

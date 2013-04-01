@@ -32,7 +32,7 @@ exports.search = function(req, res) {
 	.sort('-episode')
 	.exec(function(err, videos) {
 		if(err) res.send(err);
-		else res.render('search', { episodes: videos });
+		else res.render('search', { episodes: videos, term: term });
 	});
 };
 

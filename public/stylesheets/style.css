@@ -11,9 +11,14 @@ ul.featured li {
 	list-style: none;
 }
 
-#search input.text {
+#home input.text {
 	width: 50%;
 	font-size: 1.5em;
+	margin-bottom: 5px;
+}
+
+#search form {
+	margin-bottom: 10px;
 }
 
 ul.episodes {
