@@ -40,7 +40,7 @@ setTimeout(function() {
 		// now add the entry job!
 		function(done) {
 			var url = BASE_URL + HK_DRAMA
-			,	selector = '#m .content .normal > a';
+			,	selector = DEFAULT_SELECTOR;
 			createJob(url, selector, done);
 		}
 

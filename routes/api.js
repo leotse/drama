@@ -4,6 +4,7 @@
 
 // dependencies
 var _ =  require('underscore')
+,	async = require('async')
 ,	models = require('../models')
 ,	Video = models.Video;
 
@@ -16,13 +17,23 @@ exports.siblings = function(req, res) {
 	var params = req.params
 	,	id = params.id;
 
-	Video
-	.find()
-	.sort('-episode')
-	.exec(function(err, videos) {
+	async.waterfall([
+
+		// retrieve the requested video
+		function(done) { Video.findById(id, done); },
+
+		// now try getting the siblings
+		function(video, done) {
+			Video
+			.find()
+			.where('series', video.series)
+			.sort('-episode')
+			.exec(done);
+		}
+
+	], function(err, videos) {
 		if(err) res.send(err);
 		else {
-
 			var i, video
 			for(i = 0; i < videos.length; i++) {
 				video = videos[i];
