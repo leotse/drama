@@ -27,15 +27,11 @@ app.configure('development', function(){
   app.use(express.errorHandler());
 });
 
-// routes
-// app.get('/', routes.index);
-// app.get('/series', routes.series);
-// app.get('/episode', routes.episode);
-// app.get('/api/episodes', api.episodes);
-
 // new routes
 app.get('/', routes.index);
 app.get('/search', routes.search);
+app.get('/episode/:id', routes.episode);
+app.get('/api/siblings/:id', api.siblings);
 
 // start server
 http.createServer(app).listen(app.get('port'), function(){

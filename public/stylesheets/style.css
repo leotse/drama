@@ -15,3 +15,28 @@ ul.featured li {
 	width: 50%;
 	font-size: 1.5em;
 }
+
+ul.episodes {
+	margin: 0;
+	padding: 0;
+	list-style: none;
+}
+
+.episodes .title {
+	margin: 0 5px 0 0;
+}
+
+#player {
+	position: relative;
+}
+
+#player a { 
+	cursor: pointer;
+}
+#player a.prev {
+	float: left;
+}
+
+#player a.next {
+	float: right;
+}

@@ -14,6 +14,8 @@ if(!isProd) {
 } else { 
 	// prod environment!
 
+	// db config
+	config.db = "mongodb://drama:drama@dharma.mongohq.com:10078/drama";
 }
 
 

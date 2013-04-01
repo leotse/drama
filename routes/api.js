@@ -3,66 +3,55 @@
 /////////////////
 
 // dependencies
-var _ = require('underscore')
-,	$ = require('jquery')
-,	url = require('url')
-,	request = require('request')
-,	async = require('async');
-
+var _ =  require('underscore')
+,	models = require('../models')
+,	Video = models.Video;
 
 // constants
 var BASE_URL = "http://azdrama.net";
 
+// get the siblings of this video (prev and next)
+exports.siblings = function(req, res) {
 
-exports.episodes = function(req, res) {
-	var query = req.query
-	,	path = query.path
-	,	url = BASE_URL + path;
+	var params = req.params
+	,	id = params.id;
 
-	async.waterfall([
+	Video
+	.find()
+	.sort('-episode')
+	.exec(function(err, videos) {
+		if(err) res.send(err);
+		else {
 
-		// download episode page
-		function(done) { downloadString(url, done); },
+			var i, video
+			for(i = 0; i < videos.length; i++) {
+				video = videos[i];
+				if(video._id == id) {
+					break;
+				}
+			}
 
-		// get the player url
-		function(body, done) { 
-			var $body = $(body)
-			,	$links = $body.find('.content .lst_episode a');
+			// hopefully we found the id here
+			if(i < videos.length) {
 
-			// get the episodes metadata
-			episodes = _.map($links, function(link) {
-				var href = link.href
-				,	num = link.childNodes[0].innerHTML
-				,	number = Number(num);
+				var siblings = {};
 
-				return {
-					number: number,
-					path: getPath(href)
-				};
-			});
+				// prev episode
+				if(i < videos.length - 1) {
+					siblings.prev = videos[i + 1];
+				}
 
-			done(null, episodes);
+				// next episode
+				if(i > 0) {
+					siblings.next = videos[i - 1];
+				}
+
+				// send to client
+				res.send(siblings);
+
+			} else {
+				res.send('not found');
+			}
 		}
-
-	], function(err, episodes) {
-		res.send(episodes);
 	});
 };
-
-
-/////////////
-// Helpers //
-/////////////
-
-function downloadString(url, callback) {
-	request(url, function(err, res, body) {
-		if(err) callback(err);
-		else if (res.statusCode !== 200) callback(new Error('http error ' + res.statusCode));
-		else callback(null, body);
-	});
-}
-
-function getPath(link) {
-	var daurl = url.parse(link)
-	return daurl.pathname;
-}

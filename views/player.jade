@@ -1,8 +1,15 @@
 extends layout
 
 block content
-	h1 video 
-	video(controls, autoplay)
-		source(src="#{url}", type="video/mp4")
+	div#player
+		center
+			h1 #{episode.series} - #{episode.episode}
+			video(controls, autoplay)
+				source(src="#{episode.url}", type="video/mp4")
+			div
+				a.prev prev
+				a.next next
 	script(src="http://code.jquery.com/jquery-1.9.1.min.js")
 	script(src="/javascripts/player.js")
+	script
+		init('#{episode._id}')
