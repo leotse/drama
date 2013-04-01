@@ -21,5 +21,16 @@ var JobSchema = new Schema({
 }, { strict: true });
 
 
+// static
+JobSchema.statics.create = function(url, selector, done) {
+	var JobModel = mongoose.model('Job')
+	,	job = new JobModel;
+
+	// set the properties and save
+	job.url = url
+	job.selector = selector;
+	job.save(done);
+};
+
 // register model with mongoose
 module.exports = mongoose.model('Job', JobSchema);

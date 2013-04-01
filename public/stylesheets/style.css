@@ -17,6 +17,20 @@ ul.featured li {
 	margin-bottom: 5px;
 }
 
+#home div.popular {
+	margin: 50px auto;
+}
+
+#home div.popular p {
+	margin: 5px;
+	font-size: 0.75em;
+}
+
+#home a.popular {
+	margin: 5px;
+	text-decoration: none;
+}
+
 #search form {
 	margin-bottom: 10px;
 }
@@ -37,6 +51,7 @@ ul.episodes {
 
 #player a { 
 	cursor: pointer;
+	text-decoration: none;
 }
 #player a.prev {
 	float: left;

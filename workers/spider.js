@@ -17,40 +17,17 @@ var $ = require('jquery')
 ,	Page = models.Page
 ,	Video = models.Video;
 
-
 // constants
 var BASE_URL = "http://azdrama.net"
 ,	HK_DRAMA = "/hk-drama"
 ,	DEFAULT_SELECTOR = "#m .content a";
 
-
-// test data!
 // wait a little initially for db connection to init
-setTimeout(function() {
-	async.series([
-
-		// drop the collections
-		function(done) { Job.collection.drop(done); },
-		function(done) { Video.collection.drop(done); },
-
-		// rebuild indexes
-		function(done) { Job.ensureIndexes(done); },
-		function(done) { Video.ensureIndexes(done); },
-
-		// now add the entry job!
-		function(done) {
-			var url = BASE_URL + HK_DRAMA
-			,	selector = DEFAULT_SELECTOR;
-			createJob(url, selector, done);
-		}
-
-	], start);
-}, 1000);
-
+setTimeout(start, 1000);
 
 // start workers!
 function start() {
-	_.times(10, getJob);
+	_.times(5, getJob);
 }
 
 function getJob() {
@@ -152,7 +129,7 @@ function processLinks(html, job) {
 	});
 
 	async.each(filtered, function(url, done) {
-		createJob(url, DEFAULT_SELECTOR, done);
+		Job.create(url, DEFAULT_SELECTOR, done);
 	}, function(err) { 
 		jobCompleted(err, job);
 	});
@@ -173,7 +150,7 @@ function jobCompleted(err, job) {
 }
 
 function waitThenGetJob(err) {
-	console.log('worker waiting for job');
+	//console.log('worker waiting for job');
 	setTimeout(getJob, 1000);
 }
 
@@ -183,11 +160,4 @@ function downloadPage(url, done) {
 		else if(res.statusCode !== 200) done(new Error('download page error - ' + res.statusCode));
 		else done(null, body);
 	});
-}
-
-function createJob(url, selector, done) {
-		var job = new Job;
-		job.url = url
-		job.selector = selector;
-		job.save(done);
 }

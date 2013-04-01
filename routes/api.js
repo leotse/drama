@@ -1,6 +1,6 @@
-/////////////////
-// Main Routes //
-/////////////////
+////////////////
+// API Routes //
+////////////////
 
 // dependencies
 var _ =  require('underscore')
@@ -8,8 +8,6 @@ var _ =  require('underscore')
 ,	models = require('../models')
 ,	Video = models.Video;
 
-// constants
-var BASE_URL = "http://azdrama.net";
 
 // get the siblings of this video (prev and next)
 exports.siblings = function(req, res) {

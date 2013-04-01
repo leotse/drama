@@ -1,0 +1,11 @@
+extends layout
+
+block content
+	div#admin
+		h1 admin panel	
+		form(method="post", action="/admin/spider")
+			span start spider
+			input(type="submit", value="start")
+		form(method="post", action="/admin/killjobs")
+			span kill jobs
+			input(type="submit", value="start")

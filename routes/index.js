@@ -11,11 +11,6 @@ var _ = require('underscore')
 ,	models = require('../models')
 ,	Video = models.Video;
 
-
-// constants
-var BASE_URL = "http://azdrama.net";
-
-
 exports.index = function(req, res) {
 	res.render('home');
 };
