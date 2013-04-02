@@ -19,6 +19,17 @@ exports.search = function(req, res) {
 	,	term = query.term
 	,	regex = new RegExp(term, 'i');
 
+	// don't do anything for empty searches
+	if(!term) { 
+		res.render('search', { episodes: [], term: '' });
+		return;
+	}
+
+	// easter egg - return all shows
+	if(term === 'butz') {
+		regex = new RegExp('', 'i');
+	}
+
 	Video
 	.find()
 	.select('_id series episode url')
