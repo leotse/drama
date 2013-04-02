@@ -20,6 +20,7 @@ var $ = require('cheerio')
 ,	fs = require('fs');
 
 
+// memory monitor
 var hd = new memwatch.HeapDiff();
 memwatch.on('leak', function(info) {
 	var diff = hd.end();
