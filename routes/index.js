@@ -4,7 +4,6 @@
 
 // dependencies
 var _ = require('underscore')
-,	$ = require('jquery')
 ,	url = require('url')
 ,	request = require('request')
 ,	async = require('async')
