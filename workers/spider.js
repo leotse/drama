@@ -7,7 +7,7 @@
 // process.env.PORT = 3000;
 
 // dependencies
-var $ = require('jquery')
+var $ = require('cheerio')
 ,	_ = require('underscore')
 ,	util = require('util')
 ,	request = require('request')
@@ -15,7 +15,19 @@ var $ = require('jquery')
 ,	models = require('../models')
 ,	Job = models.Job
 ,	Page = models.Page
-,	Video = models.Video;
+,	Video = models.Video
+,	memwatch = require('memwatch')
+,	fs = require('fs');
+
+
+var hd = new memwatch.HeapDiff();
+memwatch.on('leak', function(info) {
+	var diff = hd.end();
+	fs.writeFile('diff.txt', JSON.stringify(diff), function(err) {
+		if(err) throw err;
+		else  console.log('leak detected!');
+	})
+});
 
 // constants
 var BASE_URL = "http://azdrama.net"
@@ -74,7 +86,7 @@ function processPage(job) {
 }
 
 function processVideo(html, job) {
-	var $html = $(html);
+	var $html = html;
 
 	// get video link
 	var $video = $html.find('#player iframe')
@@ -116,19 +128,18 @@ function processVideo(html, job) {
 }
 
 function processLinks(html, job) {
-	var $html = $(html)
+	var $html = html
 	,	selector = job.selector
 	,	links = $html.find(selector);
 
-	// create a list of links
-	var hrefs = _.map(links, function(link) { 
-		return link.href; 
-	});
-	var filtered = _.filter(hrefs, function(href) { 
-		return href.toLowerCase().indexOf(BASE_URL) >= 0; 
+	var urls = links.filter(function(link) {
+		var href = $(this).attr('href');
+		return href && href.toLowerCase().indexOf(BASE_URL) >= 0; 
+	}).map(function(i, link) {
+		return $(this).attr('href');
 	});
 
-	async.each(filtered, function(url, done) {
+	async.each(urls, function(url, done) {
 		Job.create(url, DEFAULT_SELECTOR, done);
 	}, function(err) { 
 		jobCompleted(err, job);
