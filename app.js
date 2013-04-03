@@ -50,8 +50,9 @@ app.get('/login', auth.index);
 app.post('/login', auth.login);
 app.get('/admin', auth.check);
 app.get('/admin', admin.index);
-app.post('/admin/spider', admin.spider);
-app.post('/admin/killjobs', admin.killJobs);
+app.post('/admin/refresh', admin.refresh);
+app.post('/admin/rebuild', admin.rebuild)
+app.post('/admin/stop', admin.stop);
 
 // api routes for javascript
 app.get('/api/siblings/:id', api.siblings);

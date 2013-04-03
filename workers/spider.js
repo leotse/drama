@@ -123,6 +123,14 @@ function processVideo(html, job) {
 			vid.episode = episode;
 			vid.url = url;
 			vid.save(done);
+
+			// upsert to db
+			Video.findOneAndUpdate(
+				{ url: url },
+				{ series: series, episode: episode, url: url },
+				{ upsert: true },
+				done
+			);
 		}
 
 	], function(err) { jobCompleted(err, job); });

@@ -3,9 +3,12 @@ extends layout
 block content
 	div#admin
 		h1 admin panel	
-		form(method="post", action="/admin/spider")
-			span start spider
+		form(method="post", action="/admin/refresh")
+			span refresh
 			input(type="submit", value="start")
-		form(method="post", action="/admin/killjobs")
-			span kill jobs
+		form(method="post", action="/admin/rebuild")
+			span rebuild
+			input(type="submit", value="start")
+		form(method="post", action="/admin/stop")
+			span stop jobs
 			input(type="submit", value="start")

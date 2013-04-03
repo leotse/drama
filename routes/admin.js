@@ -22,7 +22,29 @@ exports.index = function(req, res) {
 	res.render('admin');
 };
 
-exports.spider = function(req, res) {
+exports.refresh = function(req, res) {
+	async.series([
+
+		// remove old jobs
+		function(done) { Job.collection.drop(done); },
+		function(done) { Job.ensureIndexes(done); },
+
+		// now add the entry job!
+		function(done) {
+			var url = BASE_URL + HK_DRAMA
+			,	selector = DEFAULT_SELECTOR;
+			Job.create(url, selector, done);
+		}
+
+	], function(err) {
+
+		if(err) res.send(err);
+		else res.send('refreshing...');
+
+	});
+}
+
+exports.rebuild = function(req, res) {
 	async.series([
 
 		// drop the collections
@@ -43,15 +65,15 @@ exports.spider = function(req, res) {
 	], function(err) {
 
 		if(err) res.send(err);
-		else res.send('started spider');
+		else res.send('rebuilding...');
 
 	});
 }
 
-exports.killJobs = function(req, res) {
+exports.stop = function(req, res) {
 	Job.collection.remove(function(err) {
 		if(err) res.send(err);
-		else res.send('killed all jobs');
+		else res.send('stopping jobs...');
 	});
 };
 
