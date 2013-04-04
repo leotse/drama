@@ -33,4 +33,7 @@ async.series([
 	if(err) console.log('refresh task error - ' + err);
 	else console.log('refresh started');
 
+	// exit process either way
+	process.exit();
+
 });
