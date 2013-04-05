@@ -117,13 +117,6 @@ function processVideo(html, job) {
 			,	series = match[1]
 			,	episode = match[2];
 
-			// save video to db!
-			var vid = new Video;
-			vid.series = series;
-			vid.episode = episode;
-			vid.url = url;
-			vid.save(done);
-
 			// upsert to db
 			Video.findOneAndUpdate(
 				{ url: url },

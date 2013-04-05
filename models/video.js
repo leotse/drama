@@ -15,6 +15,7 @@ var VideoSchema = new Schema({
 
 }, { strict: true, autoIndex: true });
 
+VideoSchema.index({ series: 1, episode: 1 });
 
 // register model with mongoose
 module.exports = mongoose.model('Video', VideoSchema);
