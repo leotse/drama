@@ -4,6 +4,38 @@
 
 var lh = {};
 
+// loads the history
+lh.load = function() {
+	var storage = window.localStorage;
+	if(storage) {
+		var history = storage['history'];
+
+		// see if we need to init history storage
+		if(!history) {
+			history = [];
+		} else {
+			try {
+				history = JSON.parse(history);
+			} catch(ex) {
+				history = [];
+			}
+		}
+		return history;
+	}
+	return null;
+};
+
+// load an episode from history
+lh.loadEpisode = function(id) {
+	var storage = window.localStorage;
+	if(storage) {
+		var history = lh.load();
+		return _.find(history, function(item) {
+			return id === item._id;
+		});
+	}
+}
+
 // saves the given episode
 // if it is already in the history, move it to pos 1
 lh.save = function(episode) {
@@ -31,25 +63,12 @@ lh.save = function(episode) {
 	}
 };
 
-// loads the history
-lh.load = function() {
+// save current progress
+lh.updateProgress = function(episode, progress) {
 	var storage = window.localStorage;
 	if(storage) {
-		var history = storage['history'];
-
-		// see if we need to init history storage
-		if(!history) {
-			history = [];
-		} else {
-			try {
-				history = JSON.parse(history);
-			} catch(ex) {
-				history = [];
-			}
-		}
-		return history;
+		var history = lh.load();
 	}
-	return null;
 };
 
 // helper to find the index of an episode

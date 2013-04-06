@@ -4,12 +4,12 @@ block content
 	div#player
 		center
 			h1 #{episode.series} - #{episode.episode}
-			video(controls, autoplay)
+			video(controls)
 				source(src="#{episode.url}", type="video/mp4")
 			div
 				a.prev prev
 				a.next next
+	script
+		window.episodeId = '#{episode._id}';
 	script(src="/javascripts/history.js")
 	script(src="/javascripts/player.js")
-	script
-		init('#{episode._id}')
