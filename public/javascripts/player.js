@@ -29,6 +29,9 @@
 
 		// keyboard shortcuts
 		$(document).on('keyup', keyup);
+
+		// mouse weheel volume
+		$(document).on('mousewheel', mousewheel);
 	});
 
 
@@ -111,6 +114,23 @@
 			case 80: // char 'p' to play previous video
 				prevVideo();
 				break;
+		}
+	}
+
+	function mousewheel(e) {
+		var deltay = e.originalEvent.wheelDeltaY;
+		if(deltay > 0) {
+			if(video.muted) {
+				video.muted = false;
+			} else {
+				video.volume += 0.1;
+			}
+		} else {
+			if(video.volume < 0.1) {
+				video.muted = true;
+			} else {
+				video.volume -= 0.1;
+			}
 		}
 	}
 
