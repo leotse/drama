@@ -1,8 +1,25 @@
 // called when page is loaded
 $(document).ready(function() {
-	$('video').on('ended', nextVideo);
-	$('#player .next').on('click', nextVideo);
-	$('#player .prev').on('click', prevVideo);
+	var history = lh.load();
+	if(history) {
+		var $recent = $('#footer .recent');
+		_.each(history, function(item) {
+			// clean the series title
+			var index = item.series.indexOf('-') + 1
+			,	title = item.series.substring(index);
+
+			// create link for history item
+			var a = document.createElement('a');
+			a.className = "footer";
+			a.href = '/episode/' + item._id;
+			a.alt = title;
+			a.innerHTML = title;
+
+			// and append to dom
+			$recent.append(a);
+			$recent.show();
+		});
+	}
 });
 
 // gets called when page is loaded to pass id

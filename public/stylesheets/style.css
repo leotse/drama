@@ -17,17 +17,22 @@ ul.featured li {
 	margin-bottom: 5px;
 }
 
-#home div.popular {
+#home div#footer {
 	margin: 50px auto;
 }
 
-#home div.popular p {
+#home div#footer p {
 	margin: 5px;
-	font-size: 0.75em;
+	font-size: 0.8em;
 }
 
-#home a.popular {
+#home div#footer p.recent {
+	display: none;
+}
+
+#home div#footer a.footer {
 	margin: 5px;
+	font-size: 1.05em;
 	text-decoration: none;
 }
 

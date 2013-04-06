@@ -42,8 +42,8 @@ exports.siblings = function(req, res) {
 
 			// hopefully we found the id here
 			if(i < videos.length) {
-
 				var siblings = {};
+				siblings.current = videos[i];
 
 				// prev episode
 				if(i < videos.length - 1) {
