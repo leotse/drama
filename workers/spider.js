@@ -119,7 +119,7 @@ function processVideo(html, job) {
 
 			// upsert to db
 			Video.findOneAndUpdate(
-				{ url: url },
+				{ series: series, episode: episode },
 				{ series: series, episode: episode, url: url },
 				{ upsert: true },
 				done
