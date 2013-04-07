@@ -46,8 +46,7 @@ exports.episode = function(req, res) {
 	,	id = params.id;
 
 	Video.findById(id, function(err, video) {
-		if(err) res.send(err);
-		else if(!video) res.send(404);
+		if(err || !video) res.send(404);
 		else {
 			res.render('player', { episode: video });
 		}
