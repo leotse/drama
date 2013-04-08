@@ -21,7 +21,8 @@
 		$video
 			.on('loadedmetadata', videoLoaded)
 			.on('timeupdate', progressChanged)
-			.on('ended', nextVideo);
+			.on('ended', nextVideo)
+			.on('mousewheel', mousewheel);
 
 		// prev/next buttons
 		$('#player .next').on('click', nextVideo);
@@ -29,9 +30,6 @@
 
 		// keyboard shortcuts
 		$(document).on('keyup', keyup);
-
-		// mouse weheel volume
-		$(document).on('mousewheel', mousewheel);
 	});
 
 
@@ -132,6 +130,7 @@
 				video.volume -= 0.1;
 			}
 		}
+		return false;
 	}
 
 }());
