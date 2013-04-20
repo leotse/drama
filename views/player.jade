@@ -3,7 +3,7 @@ extends layout
 block content
 	div#player
 		center
-			h1 #{episode.series} - #{episode.episode}
+			h1 #{episode.series} - #{episode.episode} #{episode.date}
 			video(controls)
 				source(src="#{episode.url}", type="video/mp4")
 			div
