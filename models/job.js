@@ -32,5 +32,17 @@ JobSchema.statics.create = function(url, selector, done) {
 	job.save(done);
 };
 
+// methods
+JobSchema.methods.complete = function(callback) {
+	this.state = 'complete';
+	this.save(callback);
+};
+
+JobSchema.methods.error = function(msg, callback) {
+	this.state = 'error';
+	this.message = msg;
+	this.save(callback);
+};
+
 // register model with mongoose
 module.exports = mongoose.model('Job', JobSchema);

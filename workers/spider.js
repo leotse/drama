@@ -98,10 +98,23 @@ function processVideo(html, job) {
 
 	// get episode metadata
 	var title = $html.find('title').text()
-	,	match = (/(.+)\s-\sepisode\s(\d+)/i).exec(title);
+	,	parts = title.split(' - ')
+	,	series, match, episode, date;
 
-	// make sure we get the required metadat before continuing
-	if(!match || match.length !== 3) { 
+	if(parts.length >= 4) {
+		series = parts.slice(0, 2).join(' - ');
+		match = (/episode\s+(\d+)/i).exec(parts[2]);
+		if(match && match.length === 2) {
+			episode = match[1];
+		} else {
+			date = new Date(parts[2]);
+			if(Object.prototype.toString.call(date) !== "[object Date]") {
+				console.log('1');
+				jobCompleted(new Error('unable to get video metadata from title - ' + title), job);
+				return;
+			}
+		}
+	} else {
 		jobCompleted(new Error('unable to get video metadata from title - ' + title), job);
 		return;
 	}
@@ -114,13 +127,20 @@ function processVideo(html, job) {
 		// get the video url and save video
 		function(body, done) {
 			var url = $(body).find('video source').attr('src')
-			,	series = match[1]
-			,	episode = match[2];
+			,	query, updates;
+
+			if(episode) {
+				query = { series: series, episode: episode };
+				updates = { series: series, episode: episode, url: url };
+			} else {
+				query = { series: series, date: date };
+				updates = { series: series, date: date, url: url };
+			}
 
 			// upsert to db
 			Video.findOneAndUpdate(
-				{ series: series, episode: episode },
-				{ series: series, episode: episode, url: url },
+				query,
+				updates,
 				{ upsert: true },
 				done
 			);
@@ -149,14 +169,9 @@ function processLinks(html, job) {
 }
 
 function jobCompleted(err, job) {
-	if(err) {
-		job.state = 'error';
-		job.message = err.message;
-		job.save();
-	} else {
-		job.state = 'complete';
-		job.save();
-	}
+	// don't really care about duplicate key error E11000
+	if(err && err.code !== 11000) job.error(err.message); 
+	else job.remove();
 
 	// continue processing either way
 	process.nextTick(getJob);
