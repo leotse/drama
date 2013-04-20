@@ -107,12 +107,7 @@ function processVideo(html, job) {
 		if(match && match.length === 2) {
 			episode = match[1];
 		} else {
-			date = new Date(parts[2]);
-			if(Object.prototype.toString.call(date) !== "[object Date]") {
-				console.log('1');
-				jobCompleted(new Error('unable to get video metadata from title - ' + title), job);
-				return;
-			}
+			date = parts[2];
 		}
 	} else {
 		jobCompleted(new Error('unable to get video metadata from title - ' + title), job);
@@ -171,7 +166,7 @@ function processLinks(html, job) {
 function jobCompleted(err, job) {
 	// don't really care about duplicate key error E11000
 	if(err && err.code !== 11000) job.error(err.message); 
-	else job.remove();
+	else job.complete();
 
 	// continue processing either way
 	process.nextTick(getJob);

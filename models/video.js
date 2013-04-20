@@ -12,7 +12,7 @@ var VideoSchema = new Schema({
 	url: { type: String, required: true, unique: true },
 	series: { type: String, required: true },
 	episode: { type: Number },
-	date: { type: Date }
+	date: { type: String }
 
 }, { strict: true, autoIndex: true });
 

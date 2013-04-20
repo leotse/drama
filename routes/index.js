@@ -32,7 +32,7 @@ exports.search = function(req, res) {
 
 	Video
 	.find()
-	.select('_id series episode url')
+	.select('_id series episode date url')
 	.regex('series', regex)
 	.sort('-episode')
 	.exec(function(err, videos) {

@@ -28,7 +28,7 @@ async.series([
 		,	url2 = BASE_URL + HK_SHOW
 		,	selector = DEFAULT_SELECTOR;
 
-		 Job.create(url, selector, done);
+		Job.create(url, selector, done);
 		Job.create(url2, selector, done);
 	}
 

@@ -8,5 +8,5 @@ block content
 		ul.episodes
 			each episode in episodes
 				li
-					span.title #{episode.series} #{episode.episode}
+					span.title #{episode.series} #{episode.episode} #{episode.date}
 					a(href="/episode/#{episode._id}", alt="#{episode.series} #{episode.episode}") link
