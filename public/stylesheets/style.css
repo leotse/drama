@@ -17,31 +17,42 @@ ul.featured li {
 	margin-bottom: 5px;
 }
 
-#home div#footer {
+#home #footer {
 	margin: 50px auto;
 }
 
-#home div#footer p {
+#home #footer p {
 	margin: 5px;
 	font-size: 0.8em;
 }
 
-#home div#footer p.recent {
+#home #footer p.recent {
 	display: none;
 }
 
-#home div#footer a.footer {
+#home #footer a.footer {
 	margin: 5px;
 	font-size: 1.05em;
 	text-decoration: none;
 }
 
+#home #footer p.explore {
+	margin: 25px 0 0 0;
+}
+
+#home .explore a {
+	text-decoration: none;
+	font-size: 1.5em;
+}
+
+
 #search form {
 	margin-bottom: 10px;
 }
 
-ul.episodes {
-	margin: 0;
+ul.episodes,
+ul.explore {
+	margin: 0 0 10px 0;
 	padding: 0;
 	list-style: none;
 }

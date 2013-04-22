@@ -44,6 +44,7 @@ app.configure('development', function(){
 app.get('/', routes.index);
 app.get('/search', routes.search);
 app.get('/episode/:id', routes.episode);
+app.get('/explore', routes.explore);
 
 // admin routes
 app.get('/login', auth.index);

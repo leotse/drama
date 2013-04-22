@@ -1,5 +1,6 @@
 extends layout
 
+block topnav
 block content
 	center
 		div#home
@@ -21,5 +22,7 @@ block content
 					a.footer(href="/search?term=法網狙擊", alt="法網狙擊") 法網狙擊
 					a.footer(href="/search?term=幸福摩天輪", alt="幸福摩天輪") 幸福摩天輪
 				p.recent recently watched
+				p.explore
+					a(href="/explore") explore
 	script(src="/javascripts/history.js")
 	script(src="/javascripts/home.js")

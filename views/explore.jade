@@ -1,0 +1,10 @@
+extends layout
+
+block content
+	h1 explore
+	div#explore
+		ul.explore
+			each title in series
+				li
+					span.title #{title} 
+					a(href="/search?term=#{title}", alt="#{title}") link

@@ -52,3 +52,10 @@ exports.episode = function(req, res) {
 		}
 	});
 };
+
+exports.explore = function(req, res) {
+	Video.find().distinct('series', function(err, series) {
+		if(err) res.send(err);
+		else res.render('explore', { series: series });
+	});
+};
