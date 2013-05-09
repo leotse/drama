@@ -169,7 +169,7 @@ function jobCompleted(err, job) {
 	else job.complete();
 
 	// continue processing either way
-	process.nextTick(getJob);
+	setImmediate(getJob);
 }
 
 function waitThenGetJob(err) {
