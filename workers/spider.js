@@ -101,7 +101,7 @@ function processVideo(html, job) {
 	,	parts = title.split(' - ')
 	,	series, match, episode, date;
 
-	if(parts.length >= 4) {
+	if(parts.length >= 3) {
 		series = parts.slice(0, 2).join(' - ');
 		match = (/episode\s+(\d+)/i).exec(parts[2]);
 		if(match && match.length === 2) {
