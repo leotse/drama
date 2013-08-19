@@ -13,7 +13,7 @@ var _ = require('underscore')
 
 
 // constants
-var BASE_URL = "http://azdrama.net"
+var BASE_URL = "http://azdrama.sx"
 ,	HK_DRAMA = "/hk-drama"
 ,	DEFAULT_SELECTOR = "#m .content a";
 

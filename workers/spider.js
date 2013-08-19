@@ -31,7 +31,7 @@ memwatch.on('leak', function(info) {
 });
 
 // constants
-var BASE_URL = "http://azdrama.net"
+var BASE_URL = "http://azdrama.sx"
 ,	HK_DRAMA = "/hk-drama"
 ,	DEFAULT_SELECTOR = "#m .content a";
 
@@ -65,11 +65,12 @@ function processPage(job) {
 	var url = job.url
 	,	selector = job.selector;
 
-	downloadPage(url, function(err, body) {
-		if(err) {
-			jobCompleted(err, job);
-			return;
-		}
+	downloadPage(url, null, function(err, response) {
+		if(err) return jobCompleted(err, job);
+
+		// get the body and cookie jar
+		var body = response.body
+		,	jar = response.jar;
 
 		// get video link
 		var $html = $(body)
@@ -79,22 +80,22 @@ function processPage(job) {
 		// see if video is present
 		// if not, process the links on the page
 		if(url) {
-			processVideo($html, job);
+			processVideo($html, job, jar);
 		} else {
 			processLinks($html, job);
 		}
 	});
 }
 
-function processVideo(html, job) {
+function processVideo(html, job, jar) {
 	var $html = html;
 
 	// get video link
 	var $video = $html.find('#player iframe')
-	,	url = $video.attr('src');
+	,	vpurl = $video.attr('src');
 
 	// force html5 video
-	url += "&html5=1";
+	vpurl += "&html5=1";
 
 	// get episode metadata
 	var title = $html.find('title').text()
@@ -110,19 +111,24 @@ function processVideo(html, job) {
 			date = parts[2];
 		}
 	} else {
-		jobCompleted(new Error('unable to get video metadata from title - ' + title), job);
+		jobCompleted(new Error('unable to get video metadata from title: ' + title), job);
 		return;
 	}
 
 	async.waterfall([
 
 		// download page
-		function(done) { downloadPage(url, done); },
+		function(done) { downloadPage(vpurl, jar, done); },
 
 		// get the video url and save video
-		function(body, done) {
-			var url = $(body).find('video source').attr('src')
-			,	query, updates;
+		function(response, done) {
+			var body = response.body
+			,	url = $(body).find('video source').attr('src')
+			,	query
+			, 	updates;
+
+			// log error if url is not found...
+			if(!url) return jobCompleted(new Error('unable to get url (' + vpurl + ') from page: ' + body), job);
 
 			if(episode) {
 				query = { series: series, episode: episode };
@@ -141,7 +147,7 @@ function processVideo(html, job) {
 			);
 		}
 
-	], function(err) { jobCompleted(err, job); });
+	], function(err) {  jobCompleted(err, job); });
 }
 
 function processLinks(html, job) {
@@ -177,10 +183,19 @@ function waitThenGetJob(err) {
 	setTimeout(getJob, 1000);
 }
 
-function downloadPage(url, done) {
-	request(url, function(err, res, body) {
+function downloadPage(url, jar, done) {
+
+	// default user-agent
+	var ua = 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/28.0.1500.95 Safari/537.36';
+
+	// create jar if it's not defined
+	if(!jar) jar = request.jar();
+
+	// make request
+	var headers = { 'User-Agent': ua };
+	request({ url: url, headers: headers, jar: jar }, function(err, res, body) {
 		if(err) done(new Error('download page error - ' + err));
 		else if(res.statusCode !== 200) done(new Error('download page error - ' + res.statusCode));
-		else done(null, body);
+		else done(null, { body: body, jar: jar });
 	});
 }

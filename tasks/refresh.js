@@ -10,7 +10,7 @@ var async = require('async')
 ,	Job = models.Job;
 
 // constants
-var BASE_URL = "http://azdrama.net"
+var BASE_URL = "http://azdrama.sx"
 ,	HK_DRAMA = "/hk-drama"
 ,	HK_SHOW = "/hk-show"
 ,	DEFAULT_SELECTOR = "#m .content a";
